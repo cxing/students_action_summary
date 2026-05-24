@@ -1,0 +1,7 @@
+.superpowers/
+.idea/
+__pycache__/
+backend/static/
+data/
+node_modules/
+*.pyc

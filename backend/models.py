@@ -3,7 +3,7 @@ import sqlite3
 import os
 from datetime import datetime, timezone
 
-DB_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data')
+DB_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 DB_PATH = os.path.join(DB_DIR, 'learning.db')
 
 

@@ -1,0 +1,11 @@
+node_modules
+.git
+.idea
+__pycache__
+*.pyc
+.superpowers
+docs
+venv
+*.db
+requirements.docx
+main.py

@@ -25,17 +25,21 @@ def create_app():
     static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
     if os.path.isdir(static_dir):
 
-        @app.route('/')
-        def serve_index():
-            return send_from_directory(static_dir, 'index.html')
-
         @app.route('/assets/<path:filename>')
         def serve_assets(filename):
             return send_from_directory(os.path.join(static_dir, 'assets'), filename)
+
+        # SPA fallback: serve index.html for all non-API routes
+        @app.route('/', defaults={'path': ''})
+        @app.route('/<path:path>')
+        def serve_spa(path):
+            if path.startswith('api/'):
+                return {'error': 'not found'}, 404
+            return send_from_directory(static_dir, 'index.html')
 
     return app
 
 
 if __name__ == '__main__':
     app = create_app()
-    app.run(debug=True, port=5001)
+    app.run(host='0.0.0.0', port=5001, debug=False)

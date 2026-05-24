@@ -54,21 +54,37 @@
       <div class="nav-buttons">
         <button v-if="current > 0" @click="prev" class="btn-secondary">上一题</button>
         <span v-else></span>
-        <button v-if="current < questions.length - 1" @click="next" class="btn-primary">下一题</button>
-        <button v-else @click="goToDrawing" class="btn-primary">进入绘图题</button>
+        <button
+          v-if="current < questions.length - 1"
+          @click="next"
+          class="btn-primary"
+          :disabled="!hasAnswered"
+        >
+          {{ hasAnswered ? '下一题' : '请先选择答案' }}
+        </button>
+        <button
+          v-else
+          @click="goToDrawing"
+          class="btn-primary"
+          :disabled="!hasAnswered"
+        >
+          {{ hasAnswered ? '进入绘图题' : '请先选择答案' }}
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStudentStore } from '../stores/student.js'
 
 const router = useRouter()
 const store = useStudentStore()
 const current = ref(0)
+
+const hasAnswered = computed(() => store.answers[current.value + 1] != null)
 
 const questions = [
   { text: '折线统计图中的"点"表示什么？', options: { A: '数量的多少', B: '图形的颜色', C: '统计图的标题' } },

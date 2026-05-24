@@ -10,6 +10,9 @@ def create_app():
     from auth import auth_bp
     app.register_blueprint(auth_bp)
 
+    from submit import submit_bp
+    app.register_blueprint(submit_bp)
+
     @app.route('/api/health')
     def health():
         return {'ok': True}

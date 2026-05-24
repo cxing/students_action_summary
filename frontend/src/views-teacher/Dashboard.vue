@@ -59,8 +59,8 @@
     <div v-if="showConfirm" class="modal-overlay" @click.self="showConfirm = false">
       <div class="modal-card">
         <h3>确认删除</h3>
-        <p>确定要删除 <strong>{{ deleteTarget?.name }}</strong> 的答题提交吗？</p>
-        <p class="modal-hint">该学生可以重新登录并再次提交。</p>
+        <p>确定要删除 <strong>{{ deleteTarget?.name }}</strong> 的所有数据吗？</p>
+        <p class="modal-hint">此操作不可撤销，将清除该学生的全部记录。</p>
         <div class="modal-buttons">
           <button @click="showConfirm = false" class="btn-secondary">取消</button>
           <button @click="doDelete" class="btn-danger" :disabled="deleting">

@@ -112,6 +112,7 @@ def delete_student_submission(student_id):
     conn.execute('DELETE FROM answers WHERE student_id = ?', (student_id,))
     conn.execute('DELETE FROM drawings WHERE student_id = ?', (student_id,))
     conn.execute('DELETE FROM self_check WHERE student_id = ?', (student_id,))
+    conn.execute('DELETE FROM students WHERE id = ?', (student_id,))
     conn.commit()
     conn.close()
 

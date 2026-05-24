@@ -1,21 +1,19 @@
 <template>
-  <div class="login-page">
-    <!-- 装饰元素 -->
-    <div class="login-decor login-decor-1">📐</div>
-    <div class="login-decor login-decor-2">📏</div>
+  <div class="login-page-blue">
+    <!-- 装饰圆 -->
+    <div class="blue-decor blue-decor-1"></div>
+    <div class="blue-decor blue-decor-2"></div>
+
+    <!-- 学校品牌（深蓝区域） -->
+    <div class="school-hero">
+      <div class="school-logo-circle">📖</div>
+      <div class="school-name-light">紫金港小学</div>
+    </div>
 
     <div class="login-card">
-      <!-- 学校品牌 -->
-      <div class="school-brand">
-        <div class="school-icon">🏫</div>
-        <div class="school-name">杭州紫金港小学</div>
-      </div>
-
-      <!-- 标签 -->
-      <div class="login-tag">数 学 课 堂</div>
-
       <h1 class="page-title">折线统计图</h1>
       <p class="page-subtitle">学 习 单</p>
+      <p class="login-hint">请输入你的姓名开始答题</p>
 
       <form @submit.prevent="handleLogin" class="login-form">
         <input
@@ -25,7 +23,7 @@
           class="name-input"
           autocomplete="off"
         />
-        <button type="submit" class="btn-primary-warm" :disabled="!name.trim() || loading">
+        <button type="submit" class="btn-primary" :disabled="!name.trim() || loading">
           {{ loading ? '登录中...' : '开始答题' }}
         </button>
       </form>

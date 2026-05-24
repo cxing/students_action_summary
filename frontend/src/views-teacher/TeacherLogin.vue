@@ -1,25 +1,22 @@
 <template>
-  <div class="login-page">
-    <!-- 装饰元素 -->
-    <div class="login-decor login-decor-1">📐</div>
-    <div class="login-decor login-decor-2">📏</div>
+  <div class="login-page-blue">
+    <!-- 装饰圆 -->
+    <div class="blue-decor blue-decor-1"></div>
+    <div class="blue-decor blue-decor-2"></div>
+
+    <!-- 学校品牌（深蓝区域） -->
+    <div class="school-hero">
+      <div class="school-logo-circle">📖</div>
+      <div class="school-name-light">紫金港小学</div>
+    </div>
 
     <div class="login-card">
-      <!-- 学校品牌 -->
-      <div class="school-brand">
-        <div class="school-icon">🏫</div>
-        <div class="school-name">杭州紫金港小学</div>
-      </div>
-
-      <!-- 标签 -->
-      <div class="login-tag teacher-tag">教 师 端</div>
-
       <h1 class="page-title">教师登录</h1>
 
       <form @submit.prevent="handleLogin" class="login-form">
         <input v-model="username" type="text" placeholder="用户名" class="name-input" autocomplete="off" />
         <input v-model="password" type="password" placeholder="密码" class="name-input" />
-        <button type="submit" class="btn-primary-warm" :disabled="loading">
+        <button type="submit" class="btn-primary" :disabled="loading">
           {{ loading ? '登录中...' : '登录' }}
         </button>
       </form>

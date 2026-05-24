@@ -26,7 +26,7 @@
       <div class="content-card" v-if="detail.drawing">
         <h3>绘图题</h3>
         <div class="drawing-review">
-          <canvas ref="reviewCanvas" :width="400" :height="260" class="review-canvas"></canvas>
+          <canvas ref="reviewCanvas" :width="440" :height="300" class="review-canvas"></canvas>
         </div>
         <div class="drawing-score">
           <span :class="detail.drawing.auto_score.points_correct ? 'correct' : 'wrong'">
@@ -79,39 +79,62 @@ function drawReviewCanvas() {
   const canvas = reviewCanvas.value
   if (!canvas) return
   const ctx = canvas.getContext('2d')
-  const w = 400, h = 260
-  const pad = { top: 15, right: 20, bottom: 20, left: 30 }
+  const dayLabels = ['周一', '周二', '周三', '周四', '周五', '周六']
+  const w = 440, h = 300
+  const pad = { top: 15, right: 20, bottom: 28, left: 32 }
   const pw = w - pad.left - pad.right
   const ph = h - pad.top - pad.bottom
 
   ctx.fillStyle = '#fff'
   ctx.fillRect(0, 0, w, h)
 
+  // Y-axis grid lines and labels
   ctx.strokeStyle = '#e8e8e8'
   ctx.lineWidth = 0.5
+  ctx.fillStyle = '#888'
+  ctx.font = '10px sans-serif'
+  ctx.textAlign = 'right'
   for (let val = 0; val <= 45; val += 5) {
     const y = pad.top + ph - (val / 45) * ph
     ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + pw, y); ctx.stroke()
+    ctx.fillText(val, pad.left - 4, y + 3)
   }
+
+  // X-axis grid lines and labels
+  ctx.textAlign = 'center'
   for (let i = 0; i < 6; i++) {
     const x = pad.left + (i / 5) * pw
     ctx.beginPath(); ctx.moveTo(x, pad.top); ctx.lineTo(x, pad.top + ph); ctx.stroke()
+    ctx.fillText(dayLabels[i], x, pad.top + ph + 16)
   }
+
+  // Axes
+  ctx.strokeStyle = '#333'
+  ctx.lineWidth = 1.5
+  ctx.beginPath()
+  ctx.moveTo(pad.left, pad.top)
+  ctx.lineTo(pad.left, pad.top + ph)
+  ctx.lineTo(pad.left + pw, pad.top + ph)
+  ctx.stroke()
 
   const points = detail.value.drawing.points
   if (!points || points.length === 0) return
 
-  ctx.strokeStyle = '#e74c3c'
-  ctx.lineWidth = 2
-  ctx.beginPath()
-  points.forEach((pt, i) => {
-    const day = pt[0], val = pt[1]
-    const x = pad.left + (day / 5) * pw
-    const y = pad.top + ph - (val / 45) * ph
-    if (i === 0) ctx.moveTo(x, y)
-    else ctx.lineTo(x, y)
-  })
-  ctx.stroke()
+  // Only draw line if all 6 points present
+  if (points.length === 6) {
+    ctx.strokeStyle = '#e74c3c'
+    ctx.lineWidth = 2
+    ctx.beginPath()
+    const sorted = [...points].sort((a, b) => a[0] - b[0])
+    sorted.forEach((pt, i) => {
+      const day = pt[0], val = pt[1]
+      const x = pad.left + (day / 5) * pw
+      const y = pad.top + ph - (val / 45) * ph
+      if (i === 0) ctx.moveTo(x, y)
+      else ctx.lineTo(x, y)
+    })
+    ctx.stroke()
+  }
 
   points.forEach(pt => {
     const day = pt[0], val = pt[1]
@@ -120,7 +143,7 @@ function drawReviewCanvas() {
     ctx.fillStyle = '#e74c3c'
     ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill()
     ctx.fillStyle = '#333'
-    ctx.font = '10px sans-serif'
+    ctx.font = 'bold 10px sans-serif'
     ctx.textAlign = 'center'
     ctx.fillText(val, x, y - 8)
   })

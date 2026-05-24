@@ -16,14 +16,50 @@ def student_login():
     row = conn.execute('SELECT id, name FROM students WHERE name = ?', (name,)).fetchone()
     if row:
         student_id, student_name = row['id'], row['name']
+        is_new = False
     else:
         cur = conn.execute('INSERT INTO students (name) VALUES (?)', (name,))
         conn.commit()
         student_id = cur.lastrowid
         student_name = name
+        is_new = True
+
+    # Load existing answers, drawing, self_check for returning students
+    existing_answers = {}
+    existing_drawing = None
+    existing_self_check = None
+    if not is_new:
+        ans_rows = conn.execute(
+            'SELECT question_no, answer FROM answers WHERE student_id = ?', (student_id,)
+        ).fetchall()
+        for r in ans_rows:
+            existing_answers[str(r['question_no'])] = r['answer']
+
+        drawing = conn.execute('SELECT points FROM drawings WHERE student_id = ?', (student_id,)).fetchone()
+        if drawing:
+            import json
+            existing_drawing = json.loads(drawing['points'])
+
+        sc = conn.execute(
+            'SELECT point_check, line_check, draw_check, note FROM self_check WHERE student_id = ?', (student_id,)
+        ).fetchone()
+        if sc:
+            existing_self_check = {
+                'pointCheck': sc['point_check'],
+                'lineCheck': sc['line_check'],
+                'drawCheck': sc['draw_check'],
+                'note': sc['note'],
+            }
+
     conn.close()
 
-    return jsonify({'student_id': student_id, 'name': student_name})
+    return jsonify({
+        'student_id': student_id,
+        'name': student_name,
+        'existing_answers': existing_answers,
+        'existing_drawing': existing_drawing or [],
+        'existing_self_check': existing_self_check,
+    })
 
 
 @auth_bp.route('/api/teacher/login', methods=['POST'])

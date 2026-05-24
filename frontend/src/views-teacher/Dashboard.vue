@@ -11,6 +11,8 @@
     <div v-if="loading" class="loading">加载中...</div>
     <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else class="dashboard-content">
+      <div v-if="deleteMsg" :class="deleteOk ? 'success-msg' : 'error-msg'">{{ deleteMsg }}</div>
+
       <div class="stats-row">
         <div class="stat-card green">
           <span class="stat-number">{{ stats.submitted }} / {{ stats.total }}</span>
@@ -82,6 +84,8 @@ const error = ref('')
 const showConfirm = ref(false)
 const deleteTarget = ref(null)
 const deleting = ref(false)
+const deleteMsg = ref('')
+const deleteOk = ref(false)
 
 onMounted(async () => {
   try {
@@ -102,16 +106,24 @@ function confirmDelete(student) {
 
 async function doDelete() {
   deleting.value = true
+  deleteMsg.value = ''
+  const targetId = deleteTarget.value.id
+  const targetName = deleteTarget.value.name
   try {
-    await deleteStudentSubmission(deleteTarget.value.id)
+    await deleteStudentSubmission(targetId)
     showConfirm.value = false
     deleteTarget.value = null
     // Refresh dashboard
     const res = await getDashboard()
     students.value = res.data.students
     stats.value = res.data.stats
+    deleteOk.value = true
+    deleteMsg.value = `已删除 ${targetName} 的答题提交`
   } catch (e) {
-    error.value = '删除失败'
+    showConfirm.value = false
+    deleteOk.value = false
+    const detail = e.response?.data?.error || e.message || '请重试'
+    deleteMsg.value = `删除失败：${detail}`
   } finally {
     deleting.value = false
   }

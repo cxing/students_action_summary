@@ -24,9 +24,22 @@ body {
 }
 
 /* Login pages */
-.login-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-.login-card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 40px; width: 100%; max-width: 400px; text-align: center; }
+.login-container,
+.login-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+.login-page { background: linear-gradient(135deg, #dce8f5 0%, #e8f0f8 30%, #f0f4f8 60%, #faf5ee 100%); }
+.login-card { background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08); padding: 44px 40px; width: 100%; max-width: 420px; text-align: center; }
 .login-card h1 { font-size: 26px; margin-bottom: 8px; color: var(--primary-dark); }
+
+/* School Branding */
+.school-brand { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 28px; }
+.school-logo { flex-shrink: 0; }
+.school-name { font-size: 20px; font-weight: 700; color: #2c3e50; letter-spacing: 2px; }
+
+.page-title { font-size: 26px; font-weight: 700; color: var(--primary-dark); margin-bottom: 2px; }
+.page-subtitle { font-size: 17px; color: var(--text-secondary); margin-bottom: 16px; letter-spacing: 4px; }
+.login-hint { color: var(--text-secondary); font-size: 15px; margin-bottom: 20px; }
+.login-form { text-align: center; }
+
 .subtitle { color: var(--text-secondary); font-size: 16px; margin-bottom: 24px; }
 .name-input { width: 100%; padding: 14px 18px; border: 2px solid var(--border); border-radius: 8px; font-size: 18px; margin-bottom: 12px; outline: none; transition: border-color 0.2s; }
 .name-input:focus { border-color: var(--primary); }

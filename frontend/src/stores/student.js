@@ -4,12 +4,14 @@ import { ref, reactive } from 'vue'
 export const useStudentStore = defineStore('student', () => {
   const studentId = ref(null)
   const name = ref('')
-  const answers = reactive({})
+  const answers = ref({})
   const drawingPoints = ref([])
   const selfCheck = reactive({ pointCheck: '', lineCheck: '', drawCheck: '', note: '' })
 
   function setStudent(id, studentName) { studentId.value = id; name.value = studentName }
-  function setAnswer(questionNo, answer) { answers[questionNo] = answer }
+  function setAnswer(questionNo, answer) {
+    answers.value = { ...answers.value, [questionNo]: answer }
+  }
   function setDrawing(points) { drawingPoints.value = points }
   function setSelfCheck(check) {
     selfCheck.pointCheck = check.pointCheck || ''
@@ -19,7 +21,7 @@ export const useStudentStore = defineStore('student', () => {
   }
   function reset() {
     studentId.value = null; name.value = ''
-    Object.keys(answers).forEach(k => delete answers[k])
+    answers.value = {}
     drawingPoints.value = []
     selfCheck.pointCheck = ''; selfCheck.lineCheck = ''; selfCheck.drawCheck = ''; selfCheck.note = ''
   }

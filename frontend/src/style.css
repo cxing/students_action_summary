@@ -97,7 +97,8 @@ body {
 .drawing-requirements { background: #fff8e1; padding: 10px 16px; border-radius: 6px; font-size: 15px; color: #8d6e00; margin: 12px 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .canvas-wrapper { display: flex; align-items: stretch; gap: 0; margin: 20px 0; background: #fff; border: 1px solid var(--border); border-radius: 8px; overflow: auto; }
 .y-axis-label { writing-mode: vertical-lr; text-orientation: mixed; text-align: center; padding: 8px; font-size: 14px; color: var(--text-secondary); background: #fafbfc; border-right: 1px solid var(--border); white-space: nowrap; }
-.drawing-canvas { flex: 1; cursor: crosshair; min-width: 500px; }
+.canvas-area { flex: 1; display: flex; flex-direction: column; }
+.drawing-canvas { cursor: crosshair; min-width: 500px; }
 .x-axis-labels { display: flex; justify-content: space-around; padding: 6px 20px 6px 40px; font-size: 14px; color: var(--text-secondary); }
 .x-axis-labels span.active { color: var(--primary-dark); font-weight: 600; }
 .drawing-info { display: flex; justify-content: space-between; align-items: center; margin: 8px 0; }

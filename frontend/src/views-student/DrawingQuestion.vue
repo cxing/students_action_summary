@@ -27,15 +27,17 @@
 
       <div class="canvas-wrapper">
         <div class="y-axis-label">个数/个</div>
-        <canvas
-          ref="canvasRef"
-          :width="canvasWidth"
-          :height="canvasHeight"
-          @click="handleCanvasClick"
-          class="drawing-canvas"
-        ></canvas>
-        <div class="x-axis-labels">
-          <span v-for="(day, i) in dayLabels" :key="day" :class="{ active: pointsByDay[i] !== null }">{{ day }}</span>
+        <div class="canvas-area">
+          <canvas
+            ref="canvasRef"
+            :width="canvasWidth"
+            :height="canvasHeight"
+            @click="handleCanvasClick"
+            class="drawing-canvas"
+          ></canvas>
+          <div class="x-axis-labels">
+            <span v-for="(day, i) in dayLabels" :key="day" :class="{ active: pointsByDay[i] !== null }">{{ day }}</span>
+          </div>
         </div>
       </div>
 

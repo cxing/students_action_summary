@@ -7,6 +7,9 @@ def create_app():
     app.secret_key = 'change-me-in-production'
     CORS(app, supports_credentials=True, origins=['http://localhost:5173'])
 
+    from auth import auth_bp
+    app.register_blueprint(auth_bp)
+
     @app.route('/api/health')
     def health():
         return {'ok': True}

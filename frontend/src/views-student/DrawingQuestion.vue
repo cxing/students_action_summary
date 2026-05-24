@@ -12,6 +12,17 @@
         <span>要求：</span>①准确描点 ②在点旁标出数据 ③按时间顺序连线 ④观察趋势
       </div>
 
+      <details class="ref-tables">
+        <summary>统计数据参考（点击收起/展开）</summary>
+        <div class="table-section">
+          <h4>统计表二：许明哲连续6天一分钟仰卧起坐成绩统计表</h4>
+          <table class="data-table">
+            <thead><tr><th>日期</th><th>周一</th><th>周二</th><th>周三</th><th>周四</th><th>周五</th><th>周六</th></tr></thead>
+            <tbody><tr><td>个数/个</td><td>30</td><td>32</td><td>35</td><td>36</td><td>39</td><td>42</td></tr></tbody>
+          </table>
+        </div>
+      </details>
+
       <div class="canvas-wrapper">
         <div class="y-axis-label">个数/个</div>
         <canvas

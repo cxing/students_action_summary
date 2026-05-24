@@ -6,6 +6,26 @@
     </div>
 
     <div class="content-card">
+
+      <!-- 统计表参考区 -->
+      <details class="ref-tables" open>
+        <summary>统计数据参考（点击收起/展开）</summary>
+        <div class="table-section">
+          <h4>统计表一：6名同学一分钟仰卧起坐个数统计表</h4>
+          <table class="data-table">
+            <thead><tr><th>姓名</th><th>周子昂</th><th>许明哲</th><th>沈嘉诚</th><th>叶思涵</th><th>李欣怡</th><th>吴俊杰</th></tr></thead>
+            <tbody><tr><td>个数/个</td><td>35</td><td>42</td><td>38</td><td>40</td><td>36</td><td>33</td></tr></tbody>
+          </table>
+        </div>
+        <div class="table-section">
+          <h4>统计表二：许明哲连续6天一分钟仰卧起坐成绩统计表</h4>
+          <table class="data-table">
+            <thead><tr><th>日期</th><th>周一</th><th>周二</th><th>周三</th><th>周四</th><th>周五</th><th>周六</th></tr></thead>
+            <tbody><tr><td>个数/个</td><td>30</td><td>32</td><td>35</td><td>36</td><td>39</td><td>42</td></tr></tbody>
+          </table>
+        </div>
+      </details>
+
       <div class="question-header">
         <span class="question-number">第{{ current + 1 }}题</span>
         <span class="question-type">选择题</span>

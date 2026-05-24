@@ -81,10 +81,11 @@ def grade_drawing(points):
     days = [p[0] for p in points]
     in_order = all(days[i] < days[i+1] for i in range(len(days)-1))
 
-    # Check each point's value against standard
+    # Check each point's value against standard (using day_index from pt[0])
     points_correct = True
-    for i, pt in enumerate(points):
-        expected = DRAWING_STANDARD.get(i)
+    for pt in points:
+        day_index = pt[0]
+        expected = DRAWING_STANDARD.get(day_index)
         if expected is None:
             points_correct = False
             break
@@ -93,7 +94,7 @@ def grade_drawing(points):
             points_correct = False
             break
 
-    labels_complete = True
+    labels_complete = len(points) == 6
     trend = '上升' if in_order and points_correct else '无法判断'
 
     return {

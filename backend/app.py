@@ -4,9 +4,12 @@ import os
 
 
 def create_app():
-    app = Flask(__name__, static_folder='static', static_url_path='')
+    app = Flask(__name__)
     app.secret_key = 'change-me-in-production'
     CORS(app, supports_credentials=True, origins=['http://localhost:5173'])
+
+    from models import init_db
+    init_db()
 
     from auth import auth_bp
     app.register_blueprint(auth_bp)

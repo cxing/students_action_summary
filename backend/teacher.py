@@ -96,3 +96,23 @@ def student_detail(student_id):
         'drawing': drawing_data,
         'self_check': self_check_data,
     })
+
+
+@teacher_bp.route('/api/teacher/student/<int:student_id>', methods=['DELETE'])
+@require_teacher
+def delete_student_submission(student_id):
+    from models import get_db
+    conn = get_db()
+
+    student = conn.execute('SELECT id FROM students WHERE id = ?', (student_id,)).fetchone()
+    if not student:
+        conn.close()
+        return jsonify({'error': '学生不存在'}), 404
+
+    conn.execute('DELETE FROM answers WHERE student_id = ?', (student_id,))
+    conn.execute('DELETE FROM drawings WHERE student_id = ?', (student_id,))
+    conn.execute('DELETE FROM self_check WHERE student_id = ?', (student_id,))
+    conn.commit()
+    conn.close()
+
+    return jsonify({'ok': True})

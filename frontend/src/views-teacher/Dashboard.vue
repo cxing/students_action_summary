@@ -40,8 +40,9 @@
                 <span v-if="s.drawing_submitted" class="correct">&#10003;</span>
                 <span v-else class="wrong">&#10007;</span>
               </td>
-              <td>
+              <td class="action-cell">
                 <router-link :to="'/teacher/student/' + s.id" class="view-link">查看</router-link>
+                <button @click="confirmDelete(s)" class="btn-delete">删除</button>
               </td>
             </tr>
             <tr v-if="students.length === 0">
@@ -51,17 +52,36 @@
         </table>
       </div>
     </div>
+
+    <!-- 删除确认对话框 -->
+    <div v-if="showConfirm" class="modal-overlay" @click.self="showConfirm = false">
+      <div class="modal-card">
+        <h3>确认删除</h3>
+        <p>确定要删除 <strong>{{ deleteTarget?.name }}</strong> 的答题提交吗？</p>
+        <p class="modal-hint">该学生可以重新登录并再次提交。</p>
+        <div class="modal-buttons">
+          <button @click="showConfirm = false" class="btn-secondary">取消</button>
+          <button @click="doDelete" class="btn-danger" :disabled="deleting">
+            {{ deleting ? '删除中...' : '确认删除' }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getDashboard } from '../api.js'
+import { getDashboard, deleteStudentSubmission } from '../api.js'
 
 const students = ref([])
 const stats = ref({ submitted: 0, total: 0 })
 const loading = ref(true)
 const error = ref('')
+
+const showConfirm = ref(false)
+const deleteTarget = ref(null)
+const deleting = ref(false)
 
 onMounted(async () => {
   try {
@@ -74,4 +94,26 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+function confirmDelete(student) {
+  deleteTarget.value = student
+  showConfirm.value = true
+}
+
+async function doDelete() {
+  deleting.value = true
+  try {
+    await deleteStudentSubmission(deleteTarget.value.id)
+    showConfirm.value = false
+    deleteTarget.value = null
+    // Refresh dashboard
+    const res = await getDashboard()
+    students.value = res.data.students
+    stats.value = res.data.stats
+  } catch (e) {
+    error.value = '删除失败'
+  } finally {
+    deleting.value = false
+  }
+}
 </script>

@@ -22,3 +22,4 @@ export function submitAll(studentId, answers, drawingPoints, selfCheck) {
 
 export function getDashboard() { return api.get('/teacher/dashboard') }
 export function getStudentDetail(studentId) { return api.get(`/teacher/student/${studentId}`) }
+export function deleteStudentSubmission(studentId) { return api.delete(`/teacher/student/${studentId}`) }

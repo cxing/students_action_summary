@@ -168,6 +168,10 @@ body {
 .drawing-score { display: flex; flex-wrap: wrap; gap: 16px; font-size: 14px; margin: 8px 0; }
 .drawing-score span { padding: 4px 12px; background: #f5f7fa; border-radius: 6px; }
 
+.selfcheck-table td:first-child { text-align: left; font-weight: 500; }
+.selfcheck-table td:last-child { font-weight: 600; }
+.selfcheck-table .note-cell { font-weight: 400 !important; text-align: left !important; color: var(--text-secondary); font-style: italic; }
+
 /* Responsive */
 @media (max-width: 640px) {
   .login-card { padding: 24px; }

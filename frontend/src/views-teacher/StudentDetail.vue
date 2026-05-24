@@ -41,10 +41,41 @@
 
       <div class="content-card" v-if="detail.self_check">
         <h3>自我检查</h3>
-        <p>"点表示数量多少" — {{ detail.self_check.point_check || '未填' }}</p>
-        <p>"线表示变化趋势" — {{ detail.self_check.line_check || '未填' }}</p>
-        <p>"能绘制折线统计图" — {{ detail.self_check.draw_check || '未填' }}</p>
-        <p v-if="detail.self_check.note">还需注意：{{ detail.self_check.note }}</p>
+        <table class="data-table selfcheck-table">
+          <thead>
+            <tr><th>检查内容</th><th>自评结果</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>我能说出"点表示数量多少"</td>
+              <td>
+                <span v-if="detail.self_check.point_check === '能'" class="correct">✓ 能</span>
+                <span v-else-if="detail.self_check.point_check" class="wrong">✗ 还不确定</span>
+                <span v-else class="empty">未填</span>
+              </td>
+            </tr>
+            <tr>
+              <td>我能说出"线表示变化趋势"</td>
+              <td>
+                <span v-if="detail.self_check.line_check === '能'" class="correct">✓ 能</span>
+                <span v-else-if="detail.self_check.line_check" class="wrong">✗ 还不确定</span>
+                <span v-else class="empty">未填</span>
+              </td>
+            </tr>
+            <tr>
+              <td>我能根据统计表绘制折线统计图</td>
+              <td>
+                <span v-if="detail.self_check.draw_check === '能'" class="correct">✓ 能</span>
+                <span v-else-if="detail.self_check.draw_check" class="wrong">✗ 还不确定</span>
+                <span v-else class="empty">未填</span>
+              </td>
+            </tr>
+            <tr v-if="detail.self_check.note">
+              <td>还需注意</td>
+              <td class="note-cell">{{ detail.self_check.note }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

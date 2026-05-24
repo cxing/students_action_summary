@@ -13,6 +13,9 @@ def create_app():
     from submit import submit_bp
     app.register_blueprint(submit_bp)
 
+    from teacher import teacher_bp
+    app.register_blueprint(teacher_bp)
+
     @app.route('/api/health')
     def health():
         return {'ok': True}

@@ -61,6 +61,7 @@ def init_db():
     # Migration: add sub_no column and widen CHECK for existing databases
     cols = [c[1] for c in conn.execute("PRAGMA table_info(answers)").fetchall()]
     if 'sub_no' not in cols:
+        conn.execute("BEGIN")
         conn.execute("ALTER TABLE answers ADD COLUMN sub_no INTEGER NOT NULL DEFAULT 0")
         # Recreate table to widen CHECK constraint (SQLite can't ALTER CHECK)
         conn.execute("""

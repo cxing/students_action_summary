@@ -31,9 +31,9 @@ def submit():
         is_correct = 1 if (expected and ans == expected) else 0
         scores[str(qno)] = bool(is_correct)
         conn.execute("""
-            INSERT INTO answers (student_id, question_no, answer, is_correct, updated_at)
-            VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
-            ON CONFLICT(student_id, question_no)
+            INSERT INTO answers (student_id, question_no, answer, is_correct, sub_no, updated_at)
+            VALUES (?, ?, ?, ?, 0, CURRENT_TIMESTAMP)
+            ON CONFLICT(student_id, question_no, sub_no)
             DO UPDATE SET answer = excluded.answer, is_correct = excluded.is_correct, updated_at = CURRENT_TIMESTAMP
         """, (student_id, qno, ans, is_correct))
 

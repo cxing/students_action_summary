@@ -27,12 +27,13 @@ def init_db():
         CREATE TABLE IF NOT EXISTS answers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             student_id INTEGER NOT NULL,
-            question_no INTEGER NOT NULL CHECK(question_no BETWEEN 1 AND 7),
+            question_no INTEGER NOT NULL CHECK(question_no BETWEEN 1 AND 8),
             answer TEXT NOT NULL,
             is_correct INTEGER NOT NULL DEFAULT 0,
+            sub_no INTEGER NOT NULL DEFAULT 0,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (student_id) REFERENCES students(id),
-            UNIQUE(student_id, question_no)
+            UNIQUE(student_id, question_no, sub_no)
         );
 
         CREATE TABLE IF NOT EXISTS drawings (
@@ -56,11 +57,37 @@ def init_db():
         );
     """)
     conn.commit()
+
+    # Migration: add sub_no column and widen CHECK for existing databases
+    cols = [c[1] for c in conn.execute("PRAGMA table_info(answers)").fetchall()]
+    if 'sub_no' not in cols:
+        conn.execute("ALTER TABLE answers ADD COLUMN sub_no INTEGER NOT NULL DEFAULT 0")
+        # Recreate table to widen CHECK constraint (SQLite can't ALTER CHECK)
+        conn.execute("""
+            CREATE TABLE answers_new (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                student_id INTEGER NOT NULL,
+                question_no INTEGER NOT NULL CHECK(question_no BETWEEN 1 AND 8),
+                answer TEXT NOT NULL,
+                is_correct INTEGER NOT NULL DEFAULT 0,
+                sub_no INTEGER NOT NULL DEFAULT 0,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (student_id) REFERENCES students(id),
+                UNIQUE(student_id, question_no, sub_no)
+            )
+        """)
+        conn.execute("INSERT INTO answers_new SELECT id, student_id, question_no, answer, is_correct, 0, updated_at FROM answers")
+        conn.execute("DROP TABLE answers")
+        conn.execute("ALTER TABLE answers_new RENAME TO answers")
+        conn.commit()
+
     conn.close()
 
 
 # Reference answers for grading
-REFERENCE_ANSWERS = {1: 'A', 2: 'B', 3: 'A', 4: 'B', 5: 'A', 6: 'A', 7: 'A'}
+REFERENCE_ANSWERS = {1: 'A', 2: 'B', 3: 'A', 4: 'B', 5: 'A', 6: 'A', 7: 'D'}
+
+FILL_BLANK_ANSWERS = {8: {1: '25', 2: '4', 3: '11', 4: '100'}}
 
 # Standard drawing coordinates: (day_index 0-5) -> expected data value
 DRAWING_STANDARD = {0: 30, 1: 32, 2: 35, 3: 36, 4: 39, 5: 42}

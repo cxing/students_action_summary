@@ -6,10 +6,15 @@ export function studentLogin(name) { return api.post('/student/login', { name })
 export function teacherLogin(username, password) { return api.post('/teacher/login', { username, password }) }
 export function teacherCheck() { return api.get('/teacher/check') }
 
-export function submitAll(studentId, answers, drawingPoints, selfCheck) {
+export function submitAll(studentId, answers, fillBlank, drawingPoints, selfCheck) {
+  const fillBlankPayload = {}
+  if (fillBlank && Object.keys(fillBlank).length > 0) {
+    fillBlankPayload[8] = fillBlank[8] || {}
+  }
   return api.post('/submit', {
     student_id: studentId,
     answers: Object.entries(answers).map(([qno, ans]) => ({ question_no: parseInt(qno), answer: ans })),
+    fill_blank: fillBlankPayload,
     drawing_points: drawingPoints,
     self_check: {
       point_check: selfCheck.pointCheck || '',

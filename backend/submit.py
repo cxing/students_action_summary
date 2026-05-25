@@ -1,7 +1,7 @@
 # backend/submit.py
 import json
 from flask import Blueprint, request, jsonify
-from models import get_db, REFERENCE_ANSWERS, grade_drawing
+from models import get_db, REFERENCE_ANSWERS, FILL_BLANK_ANSWERS, grade_drawing
 
 submit_bp = Blueprint('submit', __name__)
 
@@ -36,6 +36,22 @@ def submit():
             ON CONFLICT(student_id, question_no)
             DO UPDATE SET answer = excluded.answer, is_correct = excluded.is_correct, updated_at = CURRENT_TIMESTAMP
         """, (student_id, qno, ans, is_correct))
+
+    # 1b. Save fill-blank answers (Q8)
+    fill_blank = data.get('fill_blank', {})
+    for qno_str, sub_answers in fill_blank.items():
+        qno = int(qno_str)
+        for sub_str, sub_ans in sub_answers.items():
+            sub_no = int(sub_str)
+            expected = FILL_BLANK_ANSWERS.get(qno, {}).get(sub_no)
+            is_correct = 1 if (expected and str(sub_ans).strip() == expected) else 0
+            scores[f'{qno}_{sub_no}'] = bool(is_correct)
+            conn.execute("""
+                INSERT INTO answers (student_id, question_no, answer, is_correct, sub_no, updated_at)
+                VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                ON CONFLICT(student_id, question_no, sub_no)
+                DO UPDATE SET answer = excluded.answer, is_correct = excluded.is_correct, updated_at = CURRENT_TIMESTAMP
+            """, (student_id, qno, str(sub_ans).strip(), is_correct, sub_no))
 
     # 2. Save drawing
     drawing_points = data.get('drawing_points', [])

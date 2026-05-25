@@ -59,7 +59,11 @@ async function handleLogin() {
     store.setStudent(d.student_id, d.name)
     if (d.existing_answers) {
       for (const [qno, ans] of Object.entries(d.existing_answers)) {
-        store.setAnswer(parseInt(qno), ans)
+        if (typeof ans === 'object') {
+          store.setFillBlank({ [parseInt(qno)]: ans })
+        } else {
+          store.setAnswer(parseInt(qno), ans)
+        }
       }
     }
     if (d.existing_drawing && d.existing_drawing.length > 0) {

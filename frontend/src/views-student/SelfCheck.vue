@@ -67,6 +67,7 @@ async function submit() {
     await submitAll(
       store.studentId,
       store.answers,
+      store.fillBlank,
       store.drawingPoints,
       { pointCheck: pointCheck.value, lineCheck: lineCheck.value, drawCheck: drawCheck.value, note: note.value }
     )

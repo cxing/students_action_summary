@@ -25,7 +25,7 @@
           <thead>
             <tr>
               <th>姓名</th>
-              <th v-for="q in 7" :key="q">Q{{ q }}</th>
+              <th v-for="q in 8" :key="q">Q{{ q }}</th>
               <th>绘图</th>
               <th>操作</th>
             </tr>
@@ -33,8 +33,8 @@
           <tbody>
             <tr v-for="s in students" :key="s.id">
               <td class="name-cell">{{ s.name }}</td>
-              <td v-for="q in 7" :key="q" class="score-cell">
-                <span v-if="s.scores[q] === true" class="correct">&#10003;</span>
+              <td v-for="q in 8" :key="q" class="score-cell">
+                <span v-if="s.scores[q] === true || s.scores[q + '_1'] !== undefined" class="correct">&#10003;</span>
                 <span v-else-if="s.scores[q] === false" class="wrong">&#10007;</span>
                 <span v-else class="empty">-</span>
               </td>

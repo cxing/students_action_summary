@@ -13,10 +13,23 @@
         <table class="data-table">
           <thead><tr><th>题号</th><th>学生答案</th><th>正确答案</th><th>结果</th></tr></thead>
           <tbody>
-            <tr v-for="a in detail.answers" :key="a.question_no">
+            <tr v-for="a in choiceAnswers" :key="a.question_no">
               <td>{{ a.question_no }}</td>
               <td>{{ a.answer || '-' }}</td>
               <td>{{ correctAnswers[a.question_no] }}</td>
+              <td :class="a.is_correct ? 'correct' : 'wrong'">{{ a.is_correct ? '✓' : '✗' }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 v-if="fillBlankAnswers.length > 0" style="margin-top: 20px;">填空题答案（第8题）</h3>
+        <table v-if="fillBlankAnswers.length > 0" class="data-table">
+          <thead><tr><th>子题号</th><th>学生答案</th><th>正确答案</th><th>结果</th></tr></thead>
+          <tbody>
+            <tr v-for="a in fillBlankAnswers" :key="'fb' + a.sub_no">
+              <td>第{{ a.sub_no }}空</td>
+              <td>{{ a.answer || '-' }}</td>
+              <td>{{ fillBlankKeys[a.sub_no] }}</td>
               <td :class="a.is_correct ? 'correct' : 'wrong'">{{ a.is_correct ? '✓' : '✗' }}</td>
             </tr>
           </tbody>
@@ -82,7 +95,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { getStudentDetail } from '../api.js'
 
 const props = defineProps({ id: String })
@@ -90,7 +103,10 @@ const detail = ref(null)
 const loading = ref(true)
 const error = ref('')
 const reviewCanvas = ref(null)
-const correctAnswers = { 1: 'A', 2: 'B', 3: 'A', 4: 'B', 5: 'A', 6: 'A', 7: 'A' }
+const correctAnswers = { 1: 'A', 2: 'B', 3: 'A', 4: 'B', 5: 'A', 6: 'A', 7: 'D' }
+const choiceAnswers = computed(() => (detail.value?.answers || []).filter(a => a.sub_no === 0))
+const fillBlankAnswers = computed(() => (detail.value?.answers || []).filter(a => a.sub_no > 0))
+const fillBlankKeys = { 1: '25', 2: '4', 3: '11', 4: '100' }
 
 onMounted(async () => {
   try {

@@ -140,8 +140,29 @@ body {
 .option-item.selected { border-color: var(--primary); background: #eef4ff; }
 .option-item input[type="radio"] { accent-color: var(--primary); width: 20px; height: 20px; }
 .option-label { font-size: 18px; }
+
+/* Q7 折线图选项网格 */
+.chart-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.chart-option { position: relative; border: 2px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s; padding: 10px; background: #fff; }
+.chart-option:hover { border-color: var(--primary); background: #f8faff; }
+.chart-option.selected { border-color: var(--primary); background: #eef4ff; }
+.chart-radio { position: absolute; opacity: 0; pointer-events: none; }
+.chart-label { position: absolute; top: 14px; left: 14px; font-size: 16px; font-weight: 700; color: var(--primary-dark); z-index: 1; }
+.chart-svg { display: block; width: 100%; height: auto; }
+
 .nav-buttons { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .nav-buttons .btn-primary { width: auto; padding: 12px 32px; font-size: 16px; }
+
+/* Fill-blank chart */
+.chart-container { margin: 20px 0; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+.fill-blank-chart-svg { display: block; width: 100%; height: auto; }
+
+/* Fill-blank paragraph inputs */
+.fill-blank-paragraph { margin: 24px 0; font-size: 18px; line-height: 2.2; }
+.fill-blank-paragraph p { margin: 0; }
+.blank-input { width: 60px; padding: 4px 8px; border: none; border-bottom: 2px solid #999; font-size: 18px; text-align: center; outline: none; background: transparent; font-family: inherit; }
+.blank-input:focus { border-bottom-color: var(--primary); }
+.blank-input::placeholder { color: #ccc; }
 
 /* Drawing */
 .plot-hint { font-size: 14px; color: var(--primary-dark); margin: 6px 0 12px; text-align: center; }
@@ -166,6 +187,7 @@ body {
 .note-input:focus { border-color: var(--primary); outline: none; }
 
 /* Submit Success */
+.login-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
 .success-card h1 { margin: 12px 0; }
 .success-icon { width: 64px; height: 64px; border-radius: 50%; background: #e6f4ea; color: var(--success); font-size: 32px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
 .success-card p { color: var(--text-secondary); margin-bottom: 24px; }
@@ -232,4 +254,6 @@ body {
   .data-table { font-size: 12px; }
   .data-table th, .data-table td { padding: 6px 4px; }
   .canvas-wrapper { overflow-x: auto; }
+  .chart-options-grid { grid-template-columns: 1fr; }
+  .fill-blank-paragraph { font-size: 16px; }
 }

@@ -25,22 +25,22 @@
           <thead>
             <tr>
               <th>姓名</th>
-              <th v-for="q in 8" :key="q">Q{{ q }}</th>
-              <th>绘图</th>
+              <th v-for="q in 7" :key="q">Q{{ q }}</th>
+              <th>Q8（填空）</th>
               <th>操作</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="s in students" :key="s.id">
               <td class="name-cell">{{ s.name }}</td>
-              <td v-for="q in 8" :key="q" class="score-cell">
-                <span v-if="s.scores[q] === true || s.scores[q + '_1'] !== undefined" class="correct">&#10003;</span>
+              <td v-for="q in 7" :key="q" class="score-cell">
+                <span v-if="s.scores[q] === true" class="correct">&#10003;</span>
                 <span v-else-if="s.scores[q] === false" class="wrong">&#10007;</span>
                 <span v-else class="empty">-</span>
               </td>
-              <td class="status-cell">
-                <span v-if="s.drawing_submitted" class="correct">&#10003;</span>
-                <span v-else class="wrong">&#10007;</span>
+              <td class="score-cell">
+                <span v-if="getQ8Summary(s) !== null" :class="getQ8Summary(s) === 4 ? 'correct' : 'wrong'">{{ getQ8Summary(s) }}/4</span>
+                <span v-else class="empty">-</span>
               </td>
               <td class="action-cell">
                 <router-link :to="'/teacher/student/' + s.id" class="view-link">查看</router-link>
@@ -48,7 +48,7 @@
               </td>
             </tr>
             <tr v-if="students.length === 0">
-              <td colspan="10" class="empty-row">暂无学生数据</td>
+              <td colspan="9" class="empty-row">暂无学生数据</td>
             </tr>
           </tbody>
         </table>
@@ -98,6 +98,13 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+function getQ8Summary(s) {
+  const keys = ['8_1', '8_2', '8_3', '8_4']
+  const hasAny = keys.some(k => k in s.scores)
+  if (!hasAny) return null
+  return keys.filter(k => s.scores[k] === true).length
+}
 
 function confirmDelete(student) {
   deleteTarget.value = student

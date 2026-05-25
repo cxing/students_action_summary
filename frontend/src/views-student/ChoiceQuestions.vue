@@ -7,8 +7,8 @@
 
     <div class="content-card">
 
-      <!-- 统计表参考区 -->
-      <details class="ref-tables" open>
+      <!-- 统计表参考区（仅 Q1-Q6 显示） -->
+      <details v-if="current < 6" class="ref-tables" open>
         <summary>统计数据参考（点击收起/展开）</summary>
         <div class="table-section">
           <h4>统计表一：6名同学一分钟仰卧起坐个数统计表</h4>
@@ -33,7 +33,8 @@
 
       <p class="question-text">{{ questions[current].text }}</p>
 
-      <div class="options-list">
+      <!-- Q1-Q6: 文字选项 -->
+      <div v-if="current < 6" class="options-list">
         <label
           v-for="(opt, key) in questions[current].options"
           :key="key"
@@ -48,6 +49,46 @@
             @change="selectAnswer(key)"
           />
           <span class="option-label">{{ key }}. {{ opt }}</span>
+        </label>
+      </div>
+
+      <!-- Q7: 折线图选项 2x2 网格 -->
+      <div v-else class="chart-options-grid">
+        <label
+          v-for="(chart, key) in q7Charts"
+          :key="key"
+          class="chart-option"
+          :class="{ selected: store.answers[7] === key }"
+        >
+          <input
+            type="radio"
+            name="q7"
+            :value="key"
+            :checked="store.answers[7] === key"
+            @change="selectAnswer(key)"
+            class="chart-radio"
+          />
+          <div class="chart-label">{{ key }}</div>
+          <svg :viewBox="chart.viewBox" class="chart-svg">
+            <!-- 网格线 -->
+            <line v-for="g in chart.gridY" :key="'gy'+g.y" :x1="chart.margin.left" :y1="g.y" :x2="chart.plotRight" :y2="g.y" stroke="#e8e8e8" stroke-width="0.5"/>
+            <line v-for="g in chart.gridX" :key="'gx'+g.x" :x1="g.x" :y1="chart.plotTop" :x2="g.x" :y2="chart.plotBottom" stroke="#e8e8e8" stroke-width="0.5"/>
+            <!-- 坐标轴 -->
+            <line :x1="chart.margin.left" :y1="chart.plotTop" :x2="chart.margin.left" :y2="chart.plotBottom" stroke="#333" stroke-width="1.2"/>
+            <line :x1="chart.margin.left" :y1="chart.plotBottom" :x2="chart.plotRight" :y2="chart.plotBottom" stroke="#333" stroke-width="1.2"/>
+            <!-- Y轴刻度 & 标签 -->
+            <text v-for="t in chart.yTicks" :key="'yt'+t.value" :x="chart.margin.left - 6" :y="t.y" text-anchor="end" font-size="10" fill="#555" dominant-baseline="middle">{{ t.value }}</text>
+            <!-- X轴刻度 & 标签 -->
+            <text v-for="t in chart.xTicks" :key="'xt'+t.value" :x="t.x" :y="chart.plotBottom + 18" text-anchor="middle" font-size="10" fill="#555">{{ t.value }}</text>
+            <!-- Y轴标题 -->
+            <text :x="12" :y="chart.plotTop + (chart.plotBottom - chart.plotTop) / 2" text-anchor="middle" font-size="12" fill="#333" :transform="'rotate(-90, 12, ' + (chart.plotTop + (chart.plotBottom - chart.plotTop) / 2) + ')'">{{ chart.yLabel }}</text>
+            <!-- X轴标题 -->
+            <text :x="chart.margin.left + (chart.plotRight - chart.margin.left) / 2" :y="chart.plotBottom + 34" text-anchor="middle" font-size="12" fill="#333">{{ chart.xLabel }}</text>
+            <!-- 数据折线 -->
+            <polyline :points="chart.linePoints" fill="none" stroke="#4a90d9" stroke-width="2.5" stroke-linejoin="round"/>
+            <!-- 数据点 -->
+            <circle v-for="(pt, i) in chart.dataPoints" :key="'dp'+i" :cx="pt.x" :cy="pt.y" r="3.5" fill="#4a90d9"/>
+          </svg>
         </label>
       </div>
 
@@ -94,10 +135,10 @@ const questions = [
   { text: '在折线统计图中，如果折线整体向上，通常表示什么？', options: { A: '数量在增加', B: '数量在减少', C: '数量没有变化' } },
   { text: '根据统计表二，许明哲连续6天一分钟仰卧起坐成绩的变化情况是：', options: { A: '成绩整体上升', B: '成绩整体下降', C: '成绩没有变化' } },
   { text: '小明一家周末驾车去湿地公园游玩。汽车以50千米/时的速度行驶1小时到达湿地公园。他们一家在湿地公园玩了3小时后，驾车以原来的速度返回。以下图像中，正确的是（ ）', options: {
-    A: '0～1小时离家距离从0增加到50千米；1～4小时保持50千米不变；4～5小时从50千米增加到100千米',
-    B: '0～1小时离家距离从0增加到50千米；1～3小时保持50千米不变；3～4小时从50千米增加到100千米',
-    C: '0～1小时离家距离从0增加到50千米；1～4小时保持50千米不变；4～5小时从50千米增加到100千米，纵轴标注为"离家距离/千米"',
-    D: '0～1小时离家距离从0增加到50千米；1～4小时保持50千米不变；4～6小时从50千米下降到0千米，纵轴标注为"离家距离/千米"',
+    A: '',
+    B: '',
+    C: '',
+    D: '',
   } },
 ]
 
@@ -105,4 +146,41 @@ function selectAnswer(key) { store.setAnswer(current.value + 1, key) }
 function next() { if (current.value < questions.length - 1) current.value++ }
 function prev() { if (current.value > 0) current.value-- }
 function goToFillBlank() { router.push('/fill-blank') }
+
+// Q7 四个折线图的数据配置
+function makeChart(yLabel, timePoints) {
+  const margin = { left: 55, top: 18, right: 20, bottom: 35 }
+  const viewBox = '0 0 420 300'
+  const plotRight = 400
+  const plotBottom = 268
+  const plotTop = margin.top
+  const plotW = plotRight - margin.left
+  const plotH = plotBottom - plotTop
+
+  const xScale = (t) => margin.left + (t / 6) * plotW
+  const yScale = (v) => plotBottom - (v / 100) * plotH
+
+  const gridY = [0, 25, 50, 75, 100].map(v => ({ y: yScale(v) }))
+  const gridX = [0, 1, 2, 3, 4, 5, 6].map(t => ({ x: xScale(t) }))
+  const yTicks = [0, 25, 50, 75, 100].map(v => ({ value: v, y: yScale(v) }))
+  const xTicks = [0, 1, 2, 3, 4, 5, 6].map(t => ({ value: t, x: xScale(t) }))
+
+  const dataPoints = timePoints.map(([t, v]) => ({ x: xScale(t), y: yScale(v) }))
+  const linePoints = dataPoints.map(p => `${p.x},${p.y}`).join(' ')
+
+  return {
+    viewBox, margin, plotRight, plotTop, plotBottom,
+    gridY, gridX, yTicks, xTicks,
+    yLabel: yLabel.replace(/\//g, ' / '),
+    xLabel: '时间/时',
+    dataPoints, linePoints,
+  }
+}
+
+const q7Charts = computed(() => ({
+  A: makeChart('行驶路程/千米', [[0,0],[1,50],[4,50],[5,100],[6,100]]),
+  B: makeChart('行驶路程/千米', [[0,0],[1,50],[3,50],[4,100],[6,100]]),
+  C: makeChart('离家距离/千米', [[0,0],[1,50],[4,50],[5,100],[6,100]]),
+  D: makeChart('离家距离/千米', [[0,0],[1,50],[4,50],[5,25],[6,0]]),
+}))
 </script>

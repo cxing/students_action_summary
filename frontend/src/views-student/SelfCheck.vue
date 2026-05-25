@@ -34,7 +34,7 @@
       </div>
 
       <div class="nav-buttons">
-        <button @click="$router.push('/drawing')" class="btn-secondary">返回绘图</button>
+        <button @click="$router.push('/fill-blank')" class="btn-secondary">返回填空题</button>
         <button @click="submit" class="btn-primary" :disabled="submitting">
           {{ submitting ? '提交中...' : '提交' }}
         </button>

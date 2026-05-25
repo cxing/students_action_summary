@@ -39,7 +39,8 @@ def student_login():
                     existing_answers[qno] = {}
                 existing_answers[qno][str(r['sub_no'])] = r['answer']
             else:
-                existing_answers[qno] = r['answer']
+                if qno not in existing_answers:
+                    existing_answers[qno] = r['answer']
 
         drawing = conn.execute('SELECT points FROM drawings WHERE student_id = ?', (student_id,)).fetchone()
         if drawing:

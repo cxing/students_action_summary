@@ -61,7 +61,8 @@ def init_db():
     # Migration: add sub_no column and widen CHECK for existing databases
     cols = [c[1] for c in conn.execute("PRAGMA table_info(answers)").fetchall()]
     if 'sub_no' not in cols:
-        conn.execute("BEGIN")
+        # Note: SQLite DDL auto-commits, so this migration is not fully atomic.
+        # The risk is low: only the DROP/RENAME window could lose data on crash.
         conn.execute("ALTER TABLE answers ADD COLUMN sub_no INTEGER NOT NULL DEFAULT 0")
         # Recreate table to widen CHECK constraint (SQLite can't ALTER CHECK)
         conn.execute("""

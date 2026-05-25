@@ -30,7 +30,7 @@ def student_login():
     existing_self_check = None
     if not is_new:
         ans_rows = conn.execute(
-            'SELECT question_no, answer, sub_no FROM answers WHERE student_id = ?', (student_id,)
+            'SELECT question_no, answer, sub_no FROM answers WHERE student_id = ? ORDER BY question_no, sub_no DESC', (student_id,)
         ).fetchall()
         for r in ans_rows:
             qno = str(r['question_no'])

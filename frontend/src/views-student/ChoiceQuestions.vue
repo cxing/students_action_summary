@@ -64,11 +64,11 @@
         </button>
         <button
           v-else
-          @click="goToDrawing"
+          @click="goToFillBlank"
           class="btn-primary"
           :disabled="!hasAnswered"
         >
-          {{ hasAnswered ? '进入绘图题' : '请先选择答案' }}
+          {{ hasAnswered ? '进入填空题' : '请先选择答案' }}
         </button>
       </div>
     </div>
@@ -93,11 +93,16 @@ const questions = [
   { text: '根据统计表二，要表示许明哲连续6天一分钟仰卧起坐成绩的变化，最适合用什么统计图？', options: { A: '条形统计图', B: '折线统计图', C: '饼图' } },
   { text: '在折线统计图中，如果折线整体向上，通常表示什么？', options: { A: '数量在增加', B: '数量在减少', C: '数量没有变化' } },
   { text: '根据统计表二，许明哲连续6天一分钟仰卧起坐成绩的变化情况是：', options: { A: '成绩整体上升', B: '成绩整体下降', C: '成绩没有变化' } },
-  { text: '能否预测许明哲周日的仰卧起坐成绩：', options: { A: '45', B: '50', C: '20' } },
+  { text: '小明一家周末驾车去湿地公园游玩。汽车以50千米/时的速度行驶1小时到达湿地公园。他们一家在湿地公园玩了3小时后，驾车以原来的速度返回。以下图像中，正确的是（ ）', options: {
+    A: '0～1小时离家距离从0增加到50千米；1～4小时保持50千米不变；4～5小时从50千米增加到100千米',
+    B: '0～1小时离家距离从0增加到50千米；1～3小时保持50千米不变；3～4小时从50千米增加到100千米',
+    C: '0～1小时离家距离从0增加到50千米；1～4小时保持50千米不变；4～5小时从50千米增加到100千米，纵轴标注为"离家距离/千米"',
+    D: '0～1小时离家距离从0增加到50千米；1～4小时保持50千米不变；4～6小时从50千米下降到0千米，纵轴标注为"离家距离/千米"',
+  } },
 ]
 
 function selectAnswer(key) { store.setAnswer(current.value + 1, key) }
 function next() { if (current.value < questions.length - 1) current.value++ }
 function prev() { if (current.value > 0) current.value-- }
-function goToDrawing() { router.push('/drawing') }
+function goToFillBlank() { router.push('/fill-blank') }
 </script>

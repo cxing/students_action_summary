@@ -18,20 +18,24 @@ def require_teacher(f):
 @teacher_bp.route('/api/teacher/dashboard', methods=['GET'])
 @require_teacher
 def dashboard():
-    from models import get_db, REFERENCE_ANSWERS
+    from models import get_db, REFERENCE_ANSWERS, FILL_BLANK_ANSWERS
     conn = get_db()
 
     students = conn.execute('SELECT id, name FROM students ORDER BY id').fetchall()
     result = []
     for s in students:
         ans_rows = conn.execute(
-            'SELECT question_no, answer, is_correct FROM answers WHERE student_id = ?', (s['id'],)
+            'SELECT question_no, answer, is_correct, sub_no FROM answers WHERE student_id = ?', (s['id'],)
         ).fetchall()
         answers = {}
         scores = {}
         for row in ans_rows:
-            answers[str(row['question_no'])] = row['answer']
-            scores[str(row['question_no'])] = bool(row['is_correct'])
+            qno = str(row['question_no'])
+            if row['sub_no'] > 0:
+                scores[f'{qno}_{row["sub_no"]}'] = bool(row['is_correct'])
+            else:
+                answers[qno] = row['answer']
+                scores[qno] = bool(row['is_correct'])
 
         drawing = conn.execute('SELECT id FROM drawings WHERE student_id = ?', (s['id'],)).fetchone()
 
@@ -65,10 +69,10 @@ def student_detail(student_id):
         return jsonify({'error': '学生不存在'}), 404
 
     ans_rows = conn.execute(
-        'SELECT question_no, answer, is_correct FROM answers WHERE student_id = ? ORDER BY question_no',
+        'SELECT question_no, answer, is_correct, sub_no FROM answers WHERE student_id = ? ORDER BY question_no, sub_no',
         (student_id,)
     ).fetchall()
-    answers = [{'question_no': r['question_no'], 'answer': r['answer'], 'is_correct': bool(r['is_correct'])} for r in ans_rows]
+    answers = [{'question_no': r['question_no'], 'answer': r['answer'], 'is_correct': bool(r['is_correct']), 'sub_no': r['sub_no']} for r in ans_rows]
 
     drawing = conn.execute('SELECT points, auto_score FROM drawings WHERE student_id = ?', (student_id,)).fetchone()
     drawing_data = None

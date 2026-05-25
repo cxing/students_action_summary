@@ -44,7 +44,7 @@ def submit():
         for sub_str, sub_ans in sub_answers.items():
             sub_no = int(sub_str)
             expected = FILL_BLANK_ANSWERS.get(qno, {}).get(sub_no)
-            is_correct = 1 if (expected and str(sub_ans).strip() == expected) else 0
+            is_correct = 1 if (expected is not None and str(sub_ans).strip() == expected) else 0
             scores[f'{qno}_{sub_no}'] = bool(is_correct)
             conn.execute("""
                 INSERT INTO answers (student_id, question_no, answer, is_correct, sub_no, updated_at)

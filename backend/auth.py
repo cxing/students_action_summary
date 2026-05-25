@@ -30,10 +30,16 @@ def student_login():
     existing_self_check = None
     if not is_new:
         ans_rows = conn.execute(
-            'SELECT question_no, answer FROM answers WHERE student_id = ?', (student_id,)
+            'SELECT question_no, answer, sub_no FROM answers WHERE student_id = ?', (student_id,)
         ).fetchall()
         for r in ans_rows:
-            existing_answers[str(r['question_no'])] = r['answer']
+            qno = str(r['question_no'])
+            if r['sub_no'] > 0:
+                if qno not in existing_answers:
+                    existing_answers[qno] = {}
+                existing_answers[qno][str(r['sub_no'])] = r['answer']
+            else:
+                existing_answers[qno] = r['answer']
 
         drawing = conn.execute('SELECT points FROM drawings WHERE student_id = ?', (student_id,)).fetchone()
         if drawing:

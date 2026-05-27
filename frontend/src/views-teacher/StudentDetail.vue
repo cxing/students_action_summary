@@ -9,190 +9,73 @@
     <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else-if="detail" class="detail-content">
       <div class="content-card">
-        <h3>选择题答案</h3>
+        <h3>答题记录</h3>
         <table class="data-table">
-          <thead><tr><th>题号</th><th>学生答案</th><th>正确答案</th><th>结果</th></tr></thead>
+          <thead><tr><th>题号</th><th>子题</th><th>学生答案</th><th>正确答案</th><th>结果</th></tr></thead>
           <tbody>
-            <tr v-for="a in choiceAnswers" :key="a.question_no">
-              <td>{{ a.question_no }}</td>
+            <tr v-for="a in detail.answers" :key="a.question_no + '_' + a.sub_no">
+              <td>Q{{ a.question_no }}</td>
+              <td>{{ a.sub_no > 0 ? '第' + a.sub_no + '空' : '-' }}</td>
               <td>{{ a.answer || '-' }}</td>
-              <td>{{ correctAnswers[a.question_no] }}</td>
+              <td>{{ getCorrectAnswer(a.question_no, a.sub_no) }}</td>
               <td :class="a.is_correct ? 'correct' : 'wrong'">{{ a.is_correct ? '✓' : '✗' }}</td>
             </tr>
           </tbody>
         </table>
 
-        <h3 v-if="fillBlankAnswers.length > 0" style="margin-top: 20px;">填空题答案（第8题）</h3>
-        <table v-if="fillBlankAnswers.length > 0" class="data-table">
-          <thead><tr><th>子题号</th><th>学生答案</th><th>正确答案</th><th>结果</th></tr></thead>
+        <h3 v-if="detail.stars && detail.stars.length > 0" style="margin-top: 20px;">闯关星级</h3>
+        <table v-if="detail.stars && detail.stars.length > 0" class="data-table">
+          <thead><tr><th>关卡</th><th>星级</th><th>尝试次数</th></tr></thead>
           <tbody>
-            <tr v-for="a in fillBlankAnswers" :key="'fb' + a.sub_no">
-              <td>第{{ a.sub_no }}空</td>
-              <td>{{ a.answer || '-' }}</td>
-              <td>{{ fillBlankKeys[a.sub_no] }}</td>
-              <td :class="a.is_correct ? 'correct' : 'wrong'">{{ a.is_correct ? '✓' : '✗' }}</td>
+            <tr v-for="s in detail.stars" :key="s.level_no">
+              <td>第{{ s.level_no }}关</td>
+              <td>
+                <span v-for="i in 3" :key="i" :style="{ color: i <= s.stars ? '#f5a623' : '#ddd' }">&#9733;</span>
+                ({{ s.stars }}/3)
+              </td>
+              <td>{{ s.attempts }} 次</td>
             </tr>
           </tbody>
         </table>
-      </div>
-
-      <div class="content-card" v-if="detail.drawing">
-        <h3>绘图题</h3>
-        <div class="drawing-review">
-          <canvas ref="reviewCanvas" :width="440" :height="300" class="review-canvas"></canvas>
-        </div>
-        <div class="drawing-score">
-          <span :class="detail.drawing.auto_score.points_correct ? 'correct' : 'wrong'">
-            {{ detail.drawing.auto_score.points_correct ? '✓' : '✗' }} 描点正确
-          </span>
-          <span :class="detail.drawing.auto_score.in_order ? 'correct' : 'wrong'">
-            {{ detail.drawing.auto_score.in_order ? '✓' : '✗' }} 按序连线
-          </span>
-          <span>趋势：{{ detail.drawing.auto_score.trend }}</span>
-        </div>
-      </div>
-
-      <div class="content-card" v-if="detail.self_check">
-        <h3>自我检查</h3>
-        <table class="data-table selfcheck-table">
-          <thead>
-            <tr><th>检查内容</th><th>自评结果</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>我能说出"点表示数量多少"</td>
-              <td>
-                <span v-if="detail.self_check.point_check === '能'" class="correct">✓ 能</span>
-                <span v-else-if="detail.self_check.point_check" class="wrong">✗ 还不确定</span>
-                <span v-else class="empty">未填</span>
-              </td>
-            </tr>
-            <tr>
-              <td>我能说出"线表示变化趋势"</td>
-              <td>
-                <span v-if="detail.self_check.line_check === '能'" class="correct">✓ 能</span>
-                <span v-else-if="detail.self_check.line_check" class="wrong">✗ 还不确定</span>
-                <span v-else class="empty">未填</span>
-              </td>
-            </tr>
-            <tr>
-              <td>我能根据统计表绘制折线统计图</td>
-              <td>
-                <span v-if="detail.self_check.draw_check === '能'" class="correct">✓ 能</span>
-                <span v-else-if="detail.self_check.draw_check" class="wrong">✗ 还不确定</span>
-                <span v-else class="empty">未填</span>
-              </td>
-            </tr>
-            <tr v-if="detail.self_check.note">
-              <td>还需注意</td>
-              <td class="note-cell">{{ detail.self_check.note }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <p v-if="detail.total_stars !== undefined" style="margin-top: 12px; font-weight: 600;">
+          总星数：{{ detail.total_stars }} / 15
+        </p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { getStudentDetail } from '../api.js'
 
 const props = defineProps({ id: String })
 const detail = ref(null)
 const loading = ref(true)
 const error = ref('')
-const reviewCanvas = ref(null)
-const correctAnswers = { 1: 'A', 2: 'B', 3: 'A', 4: 'B', 5: 'A', 6: 'A', 7: 'D' }
-const choiceAnswers = computed(() => (detail.value?.answers || []).filter(a => a.sub_no === 0))
-const fillBlankAnswers = computed(() => (detail.value?.answers || []).filter(a => a.sub_no > 0))
-const fillBlankKeys = { 1: '25', 2: '4', 3: '11', 4: '100' }
+
+const correctAnswers = {
+  1: { 0: 'A' },
+  2: { 1: 'A', 2: 'B' },
+  3: { 0: 'D' },
+  4: { 0: 'A' },
+  5: { 1: '25', 2: '4', 3: '11', 4: '100' },
+}
+
+function getCorrectAnswer(qno, subNo) {
+  const q = correctAnswers[qno]
+  if (!q) return '-'
+  return q[subNo] || '-'
+}
 
 onMounted(async () => {
   try {
     const res = await getStudentDetail(props.id)
     detail.value = res.data
-    if (detail.value.drawing) {
-      setTimeout(() => drawReviewCanvas(), 50)
-    }
   } catch (e) {
     error.value = '加载失败'
   } finally {
     loading.value = false
   }
 })
-
-function drawReviewCanvas() {
-  const canvas = reviewCanvas.value
-  if (!canvas) return
-  const ctx = canvas.getContext('2d')
-  const dayLabels = ['周一', '周二', '周三', '周四', '周五', '周六']
-  const w = 440, h = 300
-  const pad = { top: 15, right: 20, bottom: 28, left: 32 }
-  const pw = w - pad.left - pad.right
-  const ph = h - pad.top - pad.bottom
-
-  ctx.fillStyle = '#fff'
-  ctx.fillRect(0, 0, w, h)
-
-  // Y-axis grid lines and labels
-  ctx.strokeStyle = '#e8e8e8'
-  ctx.lineWidth = 0.5
-  ctx.fillStyle = '#888'
-  ctx.font = '10px sans-serif'
-  ctx.textAlign = 'right'
-  for (let val = 0; val <= 45; val += 5) {
-    const y = pad.top + ph - (val / 45) * ph
-    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + pw, y); ctx.stroke()
-    ctx.fillText(val, pad.left - 4, y + 3)
-  }
-
-  // X-axis grid lines and labels
-  ctx.textAlign = 'center'
-  for (let i = 0; i < 6; i++) {
-    const x = pad.left + (i / 5) * pw
-    ctx.beginPath(); ctx.moveTo(x, pad.top); ctx.lineTo(x, pad.top + ph); ctx.stroke()
-    ctx.fillText(dayLabels[i], x, pad.top + ph + 16)
-  }
-
-  // Axes
-  ctx.strokeStyle = '#333'
-  ctx.lineWidth = 1.5
-  ctx.beginPath()
-  ctx.moveTo(pad.left, pad.top)
-  ctx.lineTo(pad.left, pad.top + ph)
-  ctx.lineTo(pad.left + pw, pad.top + ph)
-  ctx.stroke()
-
-  const points = detail.value.drawing.points
-  if (!points || points.length === 0) return
-
-  // Only draw line if all 6 points present
-  if (points.length === 6) {
-    ctx.strokeStyle = '#e74c3c'
-    ctx.lineWidth = 2
-    ctx.beginPath()
-    const sorted = [...points].sort((a, b) => a[0] - b[0])
-    sorted.forEach((pt, i) => {
-      const day = pt[0], val = pt[1]
-      const x = pad.left + (day / 5) * pw
-      const y = pad.top + ph - (val / 45) * ph
-      if (i === 0) ctx.moveTo(x, y)
-      else ctx.lineTo(x, y)
-    })
-    ctx.stroke()
-  }
-
-  points.forEach(pt => {
-    const day = pt[0], val = pt[1]
-    const x = pad.left + (day / 5) * pw
-    const y = pad.top + ph - (val / 45) * ph
-    ctx.fillStyle = '#e74c3c'
-    ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill()
-    ctx.fillStyle = '#333'
-    ctx.font = 'bold 10px sans-serif'
-    ctx.textAlign = 'center'
-    ctx.fillText(val, x, y - 8)
-  })
-}
 </script>

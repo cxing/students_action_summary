@@ -257,3 +257,84 @@ body {
   .chart-options-grid { grid-template-columns: 1fr; }
   .fill-blank-paragraph { font-size: 16px; }
 }
+
+/* ===== Level Game Styles ===== */
+.level-container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+.level-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.level-badge { background: var(--primary-dark); color: #fff; padding: 4px 16px; border-radius: 16px; font-size: 15px; font-weight: 600; }
+.level-title { font-size: 22px; font-weight: 700; color: var(--text); }
+.star-display { margin-left: auto; font-size: 22px; }
+.star-filled { color: #f5a623; }
+.star-empty { color: #ddd; }
+
+.game-card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 36px; }
+
+.balloon-field { display: flex; justify-content: center; gap: 40px; margin: 32px 0; flex-wrap: wrap; }
+.balloon-pair { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: transform 0.3s; }
+.balloon-pair:hover { transform: scale(1.05); }
+.balloon { display: flex; flex-direction: column; align-items: center; }
+.balloon-body { width: 90px; height: 110px; border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; transition: all 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.balloon-label { font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 600; }
+.balloon-text { font-size: 13px; color: #fff; font-weight: 700; text-align: center; padding: 0 8px; }
+.balloon-string { width: 2px; height: 30px; background: #999; }
+.pair-letter { font-size: 22px; font-weight: 800; color: var(--primary-dark); margin-top: 4px; }
+.balloon-hit { animation: balloonPop 0.4s ease-out forwards; }
+.balloon-hit .balloon-body { transform: scale(0); opacity: 0; }
+.balloon-shake { animation: balloonShake 0.5s ease; }
+@keyframes balloonPop { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.5; } 100% { transform: scale(0); opacity: 0; } }
+@keyframes balloonShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+
+.drag-cards { display: flex; gap: 20px; margin: 20px 0; justify-content: center; flex-wrap: wrap; }
+.drag-card { padding: 20px 28px; background: #fff; border: 2px dashed var(--primary); border-radius: 10px; cursor: grab; font-size: 15px; font-weight: 500; text-align: center; white-space: pre-line; transition: all 0.2s; user-select: none; }
+.drag-card:hover { background: #f0f6ff; }
+.drag-card:active { cursor: grabbing; }
+.drag-card.card-placed { pointer-events: none; }
+.drag-card.card-correct { border-color: var(--success); background: #e6f4ea; }
+.drag-card.card-wrong { border-color: var(--danger); background: #fce4ec; }
+.drop-zones { display: flex; gap: 20px; margin: 20px 0; justify-content: center; flex-wrap: wrap; }
+.drop-zone { flex: 1; min-width: 200px; max-width: 320px; padding: 24px; border: 3px dashed var(--border); border-radius: 12px; text-align: center; transition: all 0.2s; }
+.drop-zone.zone-hover { border-color: var(--primary); background: #f0f6ff; }
+.drop-zone.zone-filled { border-style: solid; }
+.zone-icon { font-size: 36px; margin-bottom: 8px; }
+.zone-label { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+.zone-hint { font-size: 13px; color: var(--text-secondary); }
+.zone-result { margin-top: 12px; font-size: 15px; font-weight: 600; padding: 6px 12px; border-radius: 6px; }
+.zone-result.correct { background: #e6f4ea; color: #1b7a3d; }
+.zone-result.wrong { background: #fce4ec; color: #c0392b; }
+
+.car-animation-area { margin: 20px 0; padding: 16px; background: #fafbfc; border-radius: 8px; border: 1px solid var(--border); }
+.car-scene-svg { display: block; width: 100%; height: auto; }
+.car-controls { text-align: center; margin-top: 8px; }
+.play-btn { width: auto !important; padding: 10px 32px !important; font-size: 18px !important; }
+.phase-label { font-size: 16px; color: var(--primary-dark); font-weight: 600; }
+.phase-desc { margin-top: 8px; font-size: 14px; color: var(--text-secondary); text-align: center; }
+
+.tank-animation-area { margin: 20px 0; padding: 16px; background: #fafbfc; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
+.tank-svg { display: block; margin: 0 auto; max-width: 300px; }
+.tank-controls { margin-top: 8px; }
+.insight-box { padding: 14px 18px; background: #fff8e1; border-left: 4px solid #f5a623; border-radius: 6px; margin: 16px 0; font-size: 15px; color: #8d6e00; }
+.chart-desc-text { font-size: 12px; color: var(--text-secondary); margin-top: 4px; text-align: center; }
+
+.thermometer-area { display: flex; align-items: flex-end; gap: 16px; margin: 20px 0; padding: 16px; background: #fafbfc; border-radius: 8px; }
+.thermometer { display: flex; flex-direction: column; align-items: center; }
+.thermo-tube { width: 30px; height: 180px; background: #eee; border-radius: 15px; overflow: hidden; position: relative; border: 2px solid #ccc; }
+.thermo-mercury { position: absolute; bottom: 0; width: 100%; background: linear-gradient(to top, #e74c3c, #ff6b6b); border-radius: 0 0 13px 13px; transition: height 0.5s ease; }
+.thermo-bulb { font-size: 24px; margin-top: 4px; }
+.thermo-labels { display: flex; flex-direction: column; justify-content: space-between; height: 180px; font-size: 12px; color: var(--text-secondary); }
+.thermo-status { font-size: 15px; color: var(--text); margin-left: 16px; }
+.thermo-status span { font-weight: 600; }
+
+.feedback-correct { padding: 14px 18px; background: #e6f4ea; color: #1b7a3d; border-radius: 8px; font-size: 17px; font-weight: 600; text-align: center; margin: 16px 0; }
+.feedback-wrong { padding: 14px 18px; background: #fff3cd; color: #856404; border-radius: 8px; font-size: 16px; text-align: center; margin: 16px 0; }
+
+.stars-breakdown { margin: 20px 0; text-align: left; }
+.star-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.star-level { font-size: 16px; font-weight: 500; }
+
+.chart-section { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px 24px; margin-bottom: 20px; }
+.chart-section h3 { font-size: 18px; color: var(--primary-dark); margin-bottom: 12px; }
+.chart-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
+.chart-preview { margin-top: 16px; text-align: center; }
+.chart-preview img { max-width: 100%; border-radius: 8px; border: 1px solid var(--border); }
+
+.btn-disabled { opacity: 0.5; pointer-events: none; }

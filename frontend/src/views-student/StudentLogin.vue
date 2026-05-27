@@ -57,22 +57,10 @@ async function handleLogin() {
     const res = await studentLogin(name.value.trim())
     const d = res.data
     store.setStudent(d.student_id, d.name)
-    if (d.existing_answers) {
-      for (const [qno, ans] of Object.entries(d.existing_answers)) {
-        if (typeof ans === 'object') {
-          store.setFillBlank({ [parseInt(qno)]: ans })
-        } else {
-          store.setAnswer(parseInt(qno), ans)
-        }
-      }
+    if (d.existing_levels) {
+      store.restoreLevels(d.existing_levels)
     }
-    if (d.existing_drawing && d.existing_drawing.length > 0) {
-      store.setDrawing(d.existing_drawing)
-    }
-    if (d.existing_self_check) {
-      store.setSelfCheck(d.existing_self_check)
-    }
-    router.push('/preview')
+    router.push('/level/1')
   } catch (e) {
     error.value = '登录失败，请重试'
   } finally {

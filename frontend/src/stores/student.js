@@ -1,32 +1,45 @@
 import { defineStore } from 'pinia'
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 
 export const useStudentStore = defineStore('student', () => {
   const studentId = ref(null)
   const name = ref('')
-  const answers = ref({})
-  const drawingPoints = ref([])
-  const fillBlank = ref({})
-  const selfCheck = reactive({ pointCheck: '', lineCheck: '', drawCheck: '', note: '' })
+  const levels = reactive({
+    1: { answer: null, stars: 0, attempts: 0 },
+    2: { answer: null, stars: 0, attempts: 0 },
+    3: { answer: null, stars: 0, attempts: 0 },
+    4: { answer: null, stars: 0, attempts: 0 },
+    5: { answer: null, stars: 0, attempts: 0 },
+  })
+
+  const totalStars = computed(() => {
+    return Object.values(levels).reduce((sum, l) => sum + l.stars, 0)
+  })
 
   function setStudent(id, studentName) { studentId.value = id; name.value = studentName }
-  function setAnswer(questionNo, answer) {
-    answers.value = { ...answers.value, [questionNo]: answer }
+
+  function setLevel(levelNo, data) {
+    Object.assign(levels[levelNo], data)
   }
-  function setDrawing(points) { drawingPoints.value = points }
-  function setFillBlank(data) { fillBlank.value = { ...fillBlank.value, ...data } }
-  function setSelfCheck(check) {
-    selfCheck.pointCheck = check.pointCheck || ''
-    selfCheck.lineCheck = check.lineCheck || ''
-    selfCheck.drawCheck = check.drawCheck || ''
-    selfCheck.note = check.note || ''
+
+  function restoreLevels(existingLevels) {
+    for (const [lvl, data] of Object.entries(existingLevels)) {
+      const lv = parseInt(lvl)
+      if (lv >= 1 && lv <= 5) {
+        levels[lv].stars = data.stars || 0
+        levels[lv].attempts = data.attempts || 0
+        levels[lv].answer = data.answer || null
+      }
+    }
   }
+
   function reset() {
-    studentId.value = null; name.value = ''
-    answers.value = {}
-    drawingPoints.value = []
-    fillBlank.value = {}
-    selfCheck.pointCheck = ''; selfCheck.lineCheck = ''; selfCheck.drawCheck = ''; selfCheck.note = ''
+    studentId.value = null
+    name.value = ''
+    for (let i = 1; i <= 5; i++) {
+      levels[i] = { answer: null, stars: 0, attempts: 0 }
+    }
   }
-  return { studentId, name, answers, drawingPoints, fillBlank, selfCheck, setStudent, setAnswer, setDrawing, setFillBlank, setSelfCheck, reset }
+
+  return { studentId, name, levels, totalStars, setStudent, setLevel, restoreLevels, reset }
 })

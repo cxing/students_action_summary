@@ -20,26 +20,49 @@
         </div>
       </div>
 
+      <div class="chart-section">
+        <h3>📊 统计图生成</h3>
+        <div class="chart-buttons">
+          <button @click="showChart('questions')" class="btn-secondary">各题正确率柱状图</button>
+          <button @click="showChart('stars')" class="btn-secondary">星星分布柱状图</button>
+        </div>
+        <div v-if="chartSrc" class="chart-preview">
+          <img :src="chartSrc" alt="统计图" />
+          <br/>
+          <a :href="chartSrc" download class="btn-small" style="margin-top:8px;display:inline-block;">下载图片</a>
+        </div>
+      </div>
+
       <div class="table-wrapper">
         <table class="dashboard-table">
           <thead>
             <tr>
               <th>姓名</th>
-              <th v-for="q in 7" :key="q">Q{{ q }}</th>
-              <th>Q8（填空）</th>
+              <th v-for="q in 5" :key="q">Q{{ q }}</th>
+              <th>星星</th>
               <th>操作</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="s in students" :key="s.id">
               <td class="name-cell">{{ s.name }}</td>
-              <td v-for="q in 7" :key="q" class="score-cell">
-                <span v-if="s.scores[q] === true" class="correct">&#10003;</span>
-                <span v-else-if="s.scores[q] === false" class="wrong">&#10007;</span>
-                <span v-else class="empty">-</span>
+              <td v-for="q in 5" :key="q" class="score-cell">
+                <span v-if="q === 5">
+                  <span v-if="getQ5Summary(s) !== null" :class="getQ5Summary(s) === 4 ? 'correct' : 'wrong'">{{ getQ5Summary(s) }}/4</span>
+                  <span v-else class="empty">-</span>
+                </span>
+                <span v-else-if="q === 2">
+                  <span v-if="getQ2Summary(s) !== null" :class="getQ2Summary(s) === 2 ? 'correct' : 'wrong'">{{ getQ2Summary(s) }}/2</span>
+                  <span v-else class="empty">-</span>
+                </span>
+                <span v-else>
+                  <span v-if="s.scores[q] === true" class="correct">&#10003;</span>
+                  <span v-else-if="s.scores[q] === false" class="wrong">&#10007;</span>
+                  <span v-else class="empty">-</span>
+                </span>
               </td>
               <td class="score-cell">
-                <span v-if="getQ8Summary(s) !== null" :class="getQ8Summary(s) === 4 ? 'correct' : 'wrong'">{{ getQ8Summary(s) }}/4</span>
+                <span v-if="s.total_stars > 0" class="correct">{{ s.total_stars }}/15</span>
                 <span v-else class="empty">-</span>
               </td>
               <td class="action-cell">
@@ -48,7 +71,7 @@
               </td>
             </tr>
             <tr v-if="students.length === 0">
-              <td colspan="9" class="empty-row">暂无学生数据</td>
+              <td colspan="8" class="empty-row">暂无学生数据</td>
             </tr>
           </tbody>
         </table>
@@ -99,11 +122,24 @@ onMounted(async () => {
   }
 })
 
-function getQ8Summary(s) {
-  const keys = ['8_1', '8_2', '8_3', '8_4']
+const chartSrc = ref('')
+
+function getQ2Summary(s) {
+  const keys = ['2_1', '2_2']
   const hasAny = keys.some(k => k in s.scores)
   if (!hasAny) return null
   return keys.filter(k => s.scores[k] === true).length
+}
+
+function getQ5Summary(s) {
+  const keys = ['5_1', '5_2', '5_3', '5_4']
+  const hasAny = keys.some(k => k in s.scores)
+  if (!hasAny) return null
+  return keys.filter(k => s.scores[k] === true).length
+}
+
+function showChart(type) {
+  chartSrc.value = `/api/teacher/chart?type=${type}&t=${Date.now()}`
 }
 
 function confirmDelete(student) {

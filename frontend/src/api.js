@@ -6,25 +6,17 @@ export function studentLogin(name) { return api.post('/student/login', { name })
 export function teacherLogin(username, password) { return api.post('/teacher/login', { username, password }) }
 export function teacherCheck() { return api.get('/teacher/check') }
 
-export function submitAll(studentId, answers, fillBlank, drawingPoints, selfCheck) {
-  const fillBlankPayload = {}
-  if (fillBlank && Object.keys(fillBlank).length > 0) {
-    fillBlankPayload[8] = fillBlank[8] || {}
-  }
-  return api.post('/submit', {
+export function submitLevel(studentId, levelNo, answer, stars, attempts) {
+  return api.post('/level/submit', {
     student_id: studentId,
-    answers: Object.entries(answers).map(([qno, ans]) => ({ question_no: parseInt(qno), answer: ans })),
-    fill_blank: fillBlankPayload,
-    drawing_points: drawingPoints,
-    self_check: {
-      point_check: selfCheck.pointCheck || '',
-      line_check: selfCheck.lineCheck || '',
-      draw_check: selfCheck.drawCheck || '',
-      note: selfCheck.note || '',
-    },
+    level_no: levelNo,
+    answer: answer,
+    stars: stars,
+    attempts: attempts,
   })
 }
 
 export function getDashboard() { return api.get('/teacher/dashboard') }
 export function getStudentDetail(studentId) { return api.get(`/teacher/student/${studentId}`) }
 export function deleteStudentSubmission(studentId) { return api.delete(`/teacher/student/${studentId}`) }
+export function getChartUrl(type) { return `/api/teacher/chart?type=${type}` }
